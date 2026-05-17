@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AGS Grand – Multi Cuisine Family Restaurant</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Raleway:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --maroon: #6B1C1C;
+  --maroon-deep: #4A0E0E;
+  --maroon-light: #8B2E2E;
+  --gold: #C9A84C;
+  --gold-light: #E8C97A;
+  --gold-pale: #F5E6B8;
+  --cream: #FDF6E3;
+  --card-bg: #fff9f0;
+  --text-dark: #2C1010;
+  --text-mid: #5C3030;
+  --veg-green: #2E7D32;
+  --nonveg-red: #C62828;
+  --shadow: 0 4px 24px rgba(107,28,28,0.10);
+  --admin-bg: #0f0f13;
+  --admin-card: #1a1a24;
+  --admin-border: #2e2e40;
+  --admin-gold: #C9A84C;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Raleway', sans-serif; background: var(--cream); color: var(--text-dark); min-height: 100vh; overflow-x: hidden; }
+
+/* ═══ VIEWS ═══ */
+.view { display: none; }
+.view.active { display: block; }
+
+/* ═══ HEADER ═══ */
+header {
+  background: linear-gradient(160deg, var(--maroon-deep) 0%, var(--maroon) 60%, #8B2020 100%);
+  padding: 26px 20px 20px; text-align: center; position: relative; overflow: hidden;
+}
+header::before {
+  content: ''; position: absolute; inset: 0;
+  background: repeating-linear-gradient(45deg, rgba(201,168,76,0.04) 0px, rgba(201,168,76,0.04) 1px, transparent 1px, transparent 12px);
+}
+.header-inner { position: relative; z-index: 1; }
+.crown-icon { font-size: 2rem; display: block; animation: pulse 3s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.08)} }
+.logo-text { font-family:'Playfair Display',serif; font-size:2.2rem; font-weight:900; color:var(--gold-light); letter-spacing:2px; text-shadow:0 2px 12px rgba(0,0,0,0.4); }
+.logo-sub { color:#fff; font-size:0.8rem; letter-spacing:4px; font-weight:500; margin-top:2px; }
+.divider-gold { width:100px; height:2px; background:linear-gradient(90deg,transparent,var(--gold),transparent); margin:8px auto; }
+.tagline { color:var(--gold-pale); font-size:0.72rem; letter-spacing:2px; text-transform:uppercase; opacity:0.85; }
+.cuisine-tags { display:flex; flex-wrap:wrap; justify-content:center; gap:5px; margin-top:8px; }
+.cuisine-tag { background:rgba(201,168,76,0.18); border:1px solid rgba(201,168,76,0.4); color:var(--gold-light); font-size:0.66rem; padding:3px 9px; border-radius:20px; letter-spacing:1px; }
+.admin-link { position:absolute; bottom:10px; right:14px; z-index:2; color:rgba(255,255,255,0.25); font-size:0.6rem; cursor:pointer; letter-spacing:1px; text-decoration:none; }
+.admin-link:hover { color:var(--gold); }
+
+/* ═══ SEARCH ═══ */
+.search-wrap { padding:12px 14px 0; position:sticky; top:0; z-index:100; background:var(--cream); }
+.search-box { display:flex; align-items:center; background:#fff; border:2px solid var(--gold); border-radius:30px; padding:8px 14px; gap:8px; box-shadow:0 2px 12px rgba(107,28,28,0.1); }
+.search-box input { border:none; outline:none; background:transparent; font-family:'Raleway',sans-serif; font-size:0.88rem; color:var(--text-dark); flex:1; }
+.search-box input::placeholder { color:#bbb; }
+
+/* ═══ FILTER ═══ */
+.filter-bar { display:flex; align-items:center; gap:8px; padding:10px 14px 2px; flex-wrap:wrap; }
+.filter-btn { display:flex; align-items:center; gap:5px; padding:5px 13px; border-radius:20px; border:2px solid transparent; font-size:0.75rem; font-weight:600; cursor:pointer; transition:all 0.2s; font-family:'Raleway',sans-serif; }
+.filter-btn.all { background:var(--maroon); color:#fff; border-color:var(--maroon); }
+.filter-btn.all.off { background:transparent; color:var(--maroon); border-color:var(--maroon); }
+.filter-btn.veg { background:var(--veg-green); color:#fff; border-color:var(--veg-green); }
+.filter-btn.veg.off { background:transparent; color:var(--veg-green); border-color:var(--veg-green); }
+.filter-btn.nonveg { background:var(--nonveg-red); color:#fff; border-color:var(--nonveg-red); }
+.filter-btn.nonveg.off { background:transparent; color:var(--nonveg-red); border-color:var(--nonveg-red); }
+
+/* ═══ TABS ═══ */
+.sticky-cats { position:sticky; top:52px; z-index:99; background:var(--cream); border-bottom:1px solid rgba(201,168,76,0.2); }
+.cat-tabs-wrap { padding:8px 14px 0; overflow-x:auto; scrollbar-width:none; }
+.cat-tabs-wrap::-webkit-scrollbar { display:none; }
+.cat-tabs { display:flex; gap:7px; width:max-content; padding-bottom:4px; }
+.cat-tab { padding:5px 14px; border-radius:20px; font-size:0.74rem; font-weight:600; cursor:pointer; border:2px solid var(--maroon); color:var(--maroon); background:transparent; transition:all 0.2s; white-space:nowrap; font-family:'Raleway',sans-serif; }
+.cat-tab.active { background:var(--maroon); color:var(--gold-light); }
+
+/* ═══ MAIN ═══ */
+main { padding:14px 14px 90px; }
+.section { margin-bottom:26px; }
+.section-header { display:flex; align-items:center; gap:8px; margin-bottom:10px; }
+.section-title { font-family:'Playfair Display',serif; font-size:1.18rem; font-weight:700; color:var(--maroon); }
+.section-line { flex:1; height:1px; background:linear-gradient(90deg,var(--gold),transparent); }
+
+/* ═══ ITEM CARDS ═══ */
+.items-grid { display:flex; flex-direction:column; gap:10px; }
+.item-card {
+  background:var(--card-bg); border:1px solid rgba(201,168,76,0.25); border-radius:14px;
+  display:flex; align-items:center; gap:12px; box-shadow:var(--shadow);
+  transition:transform 0.15s, box-shadow 0.15s; overflow:hidden;
+  animation:fadeUp 0.35s ease both;
+}
+.item-card:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(107,28,28,0.14); }
+@keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+
+/* image slot */
+.item-img {
+  width:80px; height:80px; flex-shrink:0;
+  object-fit:cover; border-radius:10px 0 0 10px;
+  background:#f0e8d5;
+}
+.item-img-placeholder {
+  width:80px; height:80px; flex-shrink:0;
+  background:linear-gradient(135deg,#f5e6b8,#e8d5a0);
+  display:flex; align-items:center; justify-content:center;
+  font-size:2rem; border-radius:10px 0 0 10px; flex-direction:column;
+}
+.img-placeholder-text { font-size:0.5rem; color:#a08040; letter-spacing:0.5px; margin-top:2px; }
+
+.item-body { flex:1; padding:10px 0; min-width:0; }
+.item-top { display:flex; align-items:flex-start; gap:7px; }
+.veg-dot { width:13px; height:13px; border-radius:3px; border:2px solid; flex-shrink:0; margin-top:3px; display:flex; align-items:center; justify-content:center; }
+.veg-dot::after { content:''; width:5px; height:5px; border-radius:50%; }
+.veg-dot.veg { border-color:var(--veg-green); }
+.veg-dot.veg::after { background:var(--veg-green); }
+.veg-dot.nonveg { border-color:var(--nonveg-red); }
+.veg-dot.nonveg::after { background:var(--nonveg-red); }
+.item-name { font-weight:600; font-size:0.88rem; color:var(--text-dark); line-height:1.3; }
+.item-desc { font-size:0.7rem; color:var(--text-mid); margin-top:2px; line-height:1.4; padding-right:8px; }
+
+.item-price-wrap { padding:10px 12px 10px 0; text-align:right; flex-shrink:0; }
+.item-price { font-family:'Playfair Display',serif; font-size:1rem; font-weight:700; color:var(--maroon); white-space:nowrap; }
+.item-price span { font-size:0.72rem; font-weight:500; }
+.dual-price .price-row { font-size:0.68rem; color:var(--text-mid); display:flex; gap:4px; align-items:center; justify-content:flex-end; white-space:nowrap; }
+.dual-price .pv { font-family:'Playfair Display',serif; font-weight:700; color:var(--maroon); font-size:0.88rem; }
+
+.no-results { text-align:center; padding:50px 20px; color:var(--text-mid); font-size:0.9rem; }
+
+/* ═══ FOOTER ═══ */
+footer { background:var(--maroon-deep); color:var(--gold-pale); text-align:center; padding:16px; font-size:0.75rem; letter-spacing:1px; }
+footer strong { color:var(--gold-light); }
+
+/* ══════════════════════════════════
+   ADMIN PANEL
+══════════════════════════════════ */
+#adminView { background:var(--admin-bg); min-height:100vh; color:#e0e0f0; }
+
+/* Login */
+.admin-login {
+  display:flex; align-items:center; justify-content:center;
+  min-height:100vh; padding:20px;
+}
+.login-card {
+  background:var(--admin-card); border:1px solid var(--admin-border);
+  border-radius:16px; padding:36px 28px; width:100%; max-width:360px;
+  box-shadow:0 8px 40px rgba(0,0,0,0.5);
+}
+.login-logo { text-align:center; margin-bottom:24px; }
+.login-logo .crown { font-size:2.5rem; }
+.login-logo h2 { font-family:'Playfair Display',serif; color:var(--admin-gold); font-size:1.5rem; }
+.login-logo p { color:#888; font-size:0.75rem; letter-spacing:2px; margin-top:2px; }
+.form-group { margin-bottom:16px; }
+.form-group label { display:block; font-size:0.75rem; color:#aaa; letter-spacing:1px; margin-bottom:6px; font-weight:600; }
+.form-group input, .form-group select, .form-group textarea {
+  width:100%; padding:10px 14px; border-radius:8px;
+  border:1px solid var(--admin-border); background:#111118;
+  color:#e0e0f0; font-family:'Raleway',sans-serif; font-size:0.88rem;
+  outline:none; transition:border 0.2s;
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color:var(--admin-gold); }
+.form-group textarea { resize:vertical; min-height:70px; }
+.form-group select option { background:#1a1a24; }
+.btn-gold {
+  width:100%; padding:12px; border-radius:10px;
+  background:linear-gradient(135deg,var(--gold),#a8782a);
+  color:#1a0a00; font-weight:700; font-size:0.95rem;
+  border:none; cursor:pointer; font-family:'Raleway',sans-serif;
+  letter-spacing:1px; transition:opacity 0.2s;
+}
+.btn-gold:hover { opacity:0.9; }
+.login-error { color:#ff6b6b; font-size:0.78rem; text-align:center; margin-top:8px; display:none; }
+
+/* Admin dashboard */
+.admin-header {
+  background:linear-gradient(90deg,var(--maroon-deep),var(--maroon));
+  padding:14px 16px; display:flex; align-items:center; justify-content:space-between;
+}
+.admin-header h1 { font-family:'Playfair Display',serif; color:var(--gold-light); font-size:1.1rem; }
+.admin-nav { display:flex; gap:8px; flex-wrap:wrap; }
+.nav-btn {
+  padding:6px 14px; border-radius:20px; border:1px solid rgba(201,168,76,0.4);
+  color:var(--gold-light); background:rgba(201,168,76,0.1);
+  font-size:0.72rem; cursor:pointer; font-family:'Raleway',sans-serif;
+  font-weight:600; letter-spacing:0.5px; transition:all 0.2s;
+}
+.nav-btn:hover, .nav-btn.active { background:var(--gold); color:#1a0a00; border-color:var(--gold); }
+.nav-btn.danger { border-color:rgba(255,100,100,0.4); color:#ff9999; }
+.nav-btn.danger:hover { background:#c62828; color:#fff; border-color:#c62828; }
+
+.admin-body { padding:16px; }
+
+/* Stats */
+.stats-row { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:18px; }
+.stat-card { background:var(--admin-card); border:1px solid var(--admin-border); border-radius:12px; padding:14px 10px; text-align:center; }
+.stat-num { font-family:'Playfair Display',serif; font-size:1.6rem; font-weight:700; color:var(--admin-gold); }
+.stat-label { font-size:0.65rem; color:#888; letter-spacing:1px; margin-top:2px; }
+
+/* Section selector */
+.section-select-wrap { margin-bottom:14px; }
+.section-select-wrap select { width:100%; padding:10px 14px; border-radius:10px; border:1px solid var(--admin-border); background:#111118; color:#e0e0f0; font-family:'Raleway',sans-serif; font-size:0.88rem; outline:none; }
+
+/* Item list in admin */
+.admin-items-list { display:flex; flex-direction:column; gap:10px; }
+.admin-item-card {
+  background:var(--admin-card); border:1px solid var(--admin-border);
+  border-radius:12px; display:flex; align-items:center; gap:12px; overflow:hidden;
+}
+.admin-item-img { width:64px; height:64px; object-fit:cover; flex-shrink:0; }
+.admin-item-img-ph {
+  width:64px; height:64px; flex-shrink:0;
+  background:#222230; display:flex; align-items:center; justify-content:center;
+  font-size:1.5rem;
+}
+.admin-item-info { flex:1; padding:10px 0; min-width:0; }
+.admin-item-name { font-weight:600; font-size:0.85rem; color:#e0e0f0; }
+.admin-item-meta { font-size:0.7rem; color:#888; margin-top:2px; }
+.admin-item-actions { display:flex; gap:6px; padding:0 12px; flex-shrink:0; }
+.action-btn { padding:6px 12px; border-radius:8px; border:none; cursor:pointer; font-family:'Raleway',sans-serif; font-size:0.72rem; font-weight:600; transition:all 0.2s; }
+.action-btn.edit { background:rgba(201,168,76,0.15); color:var(--admin-gold); border:1px solid rgba(201,168,76,0.3); }
+.action-btn.edit:hover { background:var(--admin-gold); color:#1a0a00; }
+.action-btn.del { background:rgba(198,40,40,0.12); color:#ff9999; border:1px solid rgba(198,40,40,0.3); }
+.action-btn.del:hover { background:#c62828; color:#fff; }
+
+/* Add item form */
+.add-form-card {
+  background:var(--admin-card); border:1px solid var(--admin-border);
+  border-radius:14px; padding:20px 16px; margin-bottom:16px;
+}
+.add-form-card h3 { font-family:'Playfair Display',serif; color:var(--admin-gold); font-size:1rem; margin-bottom:14px; }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.img-upload-label {
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  width:100%; height:100px; border:2px dashed var(--admin-border);
+  border-radius:10px; cursor:pointer; color:#888; font-size:0.78rem;
+  gap:6px; transition:border 0.2s; background:#111118;
+}
+.img-upload-label:hover { border-color:var(--admin-gold); color:var(--admin-gold); }
+.img-upload-label .icon { font-size:1.8rem; }
+.img-preview { width:100%; height:100px; object-fit:cover; border-radius:10px; display:none; }
+#imgFileInput { display:none; }
+
+/* Modal */
+.modal-overlay {
+  display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7);
+  z-index:1000; align-items:center; justify-content:center; padding:20px;
+}
+.modal-overlay.open { display:flex; }
+.modal-card {
+  background:var(--admin-card); border:1px solid var(--admin-border);
+  border-radius:16px; padding:24px 18px; width:100%; max-width:420px;
+  max-height:90vh; overflow-y:auto;
+}
+.modal-card h3 { font-family:'Playfair Display',serif; color:var(--admin-gold); font-size:1.1rem; margin-bottom:16px; }
+.modal-actions { display:flex; gap:10px; margin-top:16px; }
+.btn-outline { flex:1; padding:10px; border-radius:10px; border:1px solid var(--admin-border); background:transparent; color:#aaa; font-family:'Raleway',sans-serif; font-weight:600; font-size:0.85rem; cursor:pointer; }
+.btn-save { flex:2; padding:10px; border-radius:10px; background:linear-gradient(135deg,var(--gold),#a8782a); color:#1a0a00; font-weight:700; font-size:0.88rem; border:none; cursor:pointer; font-family:'Raleway',sans-serif; }
+
+/* Section manager */
+.section-mgr { display:flex; flex-direction:column; gap:8px; }
+.section-row { background:var(--admin-card); border:1px solid var(--admin-border); border-radius:10px; padding:12px 14px; display:flex; align-items:center; justify-content:space-between; }
+.section-row span { font-weight:600; color:#e0e0f0; font-size:0.88rem; }
+.sec-actions { display:flex; gap:6px; }
+
+/* Toast */
+.toast {
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(100px);
+  background:#222; color:#fff; padding:10px 22px; border-radius:30px;
+  font-size:0.82rem; font-weight:600; z-index:2000; transition:transform 0.3s;
+  border:1px solid var(--admin-gold); white-space:nowrap;
+}
+.toast.show { transform:translateX(-50%) translateY(0); }
+
+/* Tab panels in admin */
+.admin-tab { display:none; }
+.admin-tab.active { display:block; }
+</style>
+</head>
+<body>
+
+<!-- ════════════════ CUSTOMER VIEW ════════════════ -->
+<div class="view active" id="customerView">
+
+  <header>
+    <div class="header-inner">
+      <span class="crown-icon">👑</span>
+      <div class="logo-text">AGS Grand</div>
+      <div class="logo-sub">MULTI CUISINE · FAMILY RESTAURANT</div>
+      <div class="divider-gold"></div>
+      <div class="tagline">South Indian · North Indian · Chinese · Grill & Tandoor</div>
+      <div class="cuisine-tags">
+        <span class="cuisine-tag">Veg & Non-Veg</span>
+        <span class="cuisine-tag">Breakfast</span>
+        <span class="cuisine-tag">Lunch</span>
+        <span class="cuisine-tag">Dinner</span>
+        <span class="cuisine-tag">Tea & Snacks</span>
+      </div>
+    </div>
+    <span class="admin-link" onclick="showAdminLogin()">⚙</span>
+  </header>
+
+  <div class="search-wrap">
+    <div class="search-box">
+      <span>🔍</span>
+      <input type="text" id="searchInput" placeholder="Search dishes…" oninput="applyFilters()"/>
+    </div>
+  </div>
+
+  <div class="filter-bar">
+    <button class="filter-btn all" id="fAll" onclick="setFilter('all')">All</button>
+    <button class="filter-btn veg off" id="fVeg" onclick="setFilter('veg')">🟢 Veg</button>
+    <button class="filter-btn nonveg off" id="fNv" onclick="setFilter('nonveg')">🔴 Non-Veg</button>
+  </div>
+
+  <div class="sticky-cats">
+    <div class="cat-tabs-wrap"><div class="cat-tabs" id="catTabs"></div></div>
+  </div>
+
+  <main id="mainContent"></main>
+
+  <footer>
+    <strong>AGS Grand</strong> · Multi Cuisine, A Family Restaurant<br/>
+    Breakfast / Lunch / Dinner / Tea &amp; Snacks
+  </footer>
+</div>
+
+<!-- ════════════════ ADMIN VIEW ════════════════ -->
+<div class="view" id="adminView">
+
+  <!-- LOGIN -->
+  <div id="adminLogin" class="admin-login">
+    <div class="login-card">
+      <div class="login-logo">
+        <div class="crown">👑</div>
+        <h2>AGS Grand</h2>
+        <p>ADMIN PANEL</p>
+      </div>
+      <div class="form-group">
+        <label>USERNAME</label>
+        <input type="text" id="loginUser" placeholder="admin"/>
+      </div>
+      <div class="form-group">
+        <label>PASSWORD</label>
+        <input type="password" id="loginPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"/>
+      </div>
+      <button class="btn-gold" onclick="doLogin()">LOGIN →</button>
+      <div class="login-error" id="loginErr">❌ Invalid credentials</div>
+      <div style="text-align:center;margin-top:16px">
+        <span style="color:#555;font-size:0.72rem;cursor:pointer" onclick="showCustomer()">← Back to Menu</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="adminDash" style="display:none">
+    <div class="admin-header">
+      <h1>👑 Admin Panel</h1>
+      <div class="admin-nav">
+        <button class="nav-btn active" onclick="switchTab('items')">Items</button>
+        <button class="nav-btn" onclick="switchTab('sections')">Categories</button>
+        <button class="nav-btn" onclick="switchTab('add')">+ Add Item</button>
+        <button class="nav-btn danger" onclick="doLogout()">Logout</button>
+        <button class="nav-btn" onclick="showCustomer()" style="border-color:rgba(100,200,100,0.4);color:#99ff99">View Menu</button>
+      </div>
+    </div>
+
+    <div class="admin-body">
+      <!-- STATS -->
+      <div class="stats-row" id="statsRow"></div>
+
+      <!-- ITEMS TAB -->
+      <div class="admin-tab active" id="tab-items">
+        <div class="section-select-wrap">
+          <select id="adminCatFilter" onchange="renderAdminItems()">
+            <option value="All">All Categories</option>
+          </select>
+        </div>
+        <div class="admin-items-list" id="adminItemsList"></div>
+      </div>
+
+      <!-- SECTIONS TAB -->
+      <div class="admin-tab" id="tab-sections">
+        <div class="add-form-card">
+          <h3>Add New Category</h3>
+          <div class="form-group">
+            <label>CATEGORY NAME</label>
+            <input type="text" id="newSecName" placeholder="e.g. Tandoor Items"/>
+          </div>
+          <div class="form-group">
+            <label>EMOJI</label>
+            <input type="text" id="newSecEmoji" placeholder="e.g. 🔥" style="width:80px"/>
+          </div>
+          <button class="btn-gold" onclick="addSection()" style="width:auto;padding:10px 24px">Add Category</button>
+        </div>
+        <div class="section-mgr" id="sectionMgr"></div>
+      </div>
+
+      <!-- ADD ITEM TAB -->
+      <div class="admin-tab" id="tab-add">
+        <div class="add-form-card">
+          <h3>Add New Item</h3>
+          <div class="form-group">
+            <label>CATEGORY</label>
+            <select id="addItemCat"></select>
+          </div>
+          <div class="form-row">
+            <div class="form-group" style="margin-bottom:0">
+              <label>ITEM NAME</label>
+              <input type="text" id="addItemName" placeholder="e.g. Butter Chicken"/>
+            </div>
+            <div class="form-group" style="margin-bottom:0">
+              <label>PRICE (₹)</label>
+              <input type="number" id="addItemPrice" placeholder="150"/>
+            </div>
+          </div>
+          <div class="form-group" style="margin-top:12px">
+            <label>DESCRIPTION (optional)</label>
+            <textarea id="addItemDesc" placeholder="Short description…"></textarea>
+          </div>
+          <div class="form-group">
+            <label>TYPE</label>
+            <select id="addItemType">
+              <option value="veg">🟢 Veg</option>
+              <option value="nonveg">🔴 Non-Veg</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>DISH IMAGE</label>
+            <input type="file" id="imgFileInput" accept="image/*" onchange="previewImg(this)"/>
+            <label for="imgFileInput" class="img-upload-label" id="imgUploadLabel">
+              <span class="icon">📷</span>
+              <span>Tap to upload photo</span>
+            </label>
+            <img id="imgPreview" class="img-preview" alt="preview"/>
+          </div>
+          <button class="btn-gold" onclick="addItem()">Add Item to Menu</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal-card">
+    <h3>Edit Item</h3>
+    <input type="hidden" id="editId"/>
+    <input type="hidden" id="editCatIdx"/>
+    <div class="form-group"><label>ITEM NAME</label><input type="text" id="editName"/></div>
+    <div class="form-group"><label>PRICE (₹)</label><input type="number" id="editPrice"/></div>
+    <div class="form-group"><label>DESCRIPTION</label><textarea id="editDesc"></textarea></div>
+    <div class="form-group">
+      <label>TYPE</label>
+      <select id="editType">
+        <option value="veg">🟢 Veg</option>
+        <option value="nonveg">🔴 Non-Veg</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>DISH IMAGE</label>
+      <input type="file" id="editImgFile" accept="image/*" onchange="previewEditImg(this)"/>
+      <label for="editImgFile" class="img-upload-label" id="editImgLabel">
+        <span class="icon">📷</span><span>Change photo</span>
+      </label>
+      <img id="editImgPreview" class="img-preview" alt="preview"/>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" onclick="saveEdit()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════
+//  DATA — stored in localStorage
+// ══════════════════════════════════════
+const DEFAULT_MENU = [
+  { category:"Non Veg Biryanis", emoji:"🍖", items:[
+    {id:uid(),name:"AGS Special Boneless Biryani",price:330,type:"nonveg",img:"",desc:""},
+    {id:uid(),name:"Hyd. Dum Biryani",price:120,type:"nonveg",img:"",desc:""},
+    {id:uid(),name:"Chicken Fry Piece Biryani",price:150,type:"nonveg",img:"",desc:""},
+    {id:uid(),name:"Chicken Kabab Piece Biryani",price:150,type:"nonveg",img:"",desc:""},
+    {id:uid(),name:"Guntur Chicken Biryani",price:180,type:"nonveg",img:"",desc:""},
+    {id:uid(),name:"Gongura Chicken Biryani",price:180,type:"nonveg",img:"",desc:""},
+    {id:uid(),name:"Chettinad Chicken Biryani",price:180,type:"nonveg",img:"",desc:""},
+    {id:uid(),name:"Chicken Mughalai Biryani",price:220,type:"nonveg",img:"",desc:""},
+  ]},
+  { category:"Veg Biryanis", emoji:"🌿", items:[
+    {id:uid(),name:"Special Kaju Biryani",price:180,type:"veg",img:"",desc:""},
+    {id:uid(),name:"Panner Biryani",price:150,type:"veg",img:"",desc:""},
+    {id:uid(),name:"Mushroom Biryani",price:150,type:"veg",img:"",desc:""},
+    {id:uid(),name:"Baby Corn Biryani",price:150,type:"veg",img:"",desc:""},
+    {id:uid(),name:"Mix Veg Biryani",price:130,type:"veg",img:"",desc:""},
+  ]},
+  { category:"Chinese Boneless Starters", emoji:"🍗", items:[
+    {id:uid(),name:"Chicken Manchurian",price:140,type:"nonveg",img:"",desc:""},
+    {id:uid(),name:"Chilly Chicken",price:140,type:"nonveg",img:"",desc:""},
+    {id:uid(),name:"Pepper Chicken",price:140,type:"nonveg",img:"",desc:""},
+    {id:uid(),name:"Chicken 65",price:155,type:"nonveg",img:"",desc:""},
+    {id:uid(),name:"Dragon Chicken",price:140,type:"nonveg",img:"",desc:""},
+    {id:uid(),name:"Kaju Butter Chicken Dry",price:220,type:"nonveg",img:"",desc:""},
+    {id:uid(),name:"Chicken Lolly Pop (4P)",price:100,type:"nonveg",img:"",desc:""},
+    {id:uid(),name:"Chicken Lolly Pop Manchurian (4P)",price:130,type:"nonveg",img:"",desc:""},
+    {id:uid(),name:"Kabab (250g)",price:125,type:"nonveg",img:"",desc:""},
+    {id:uid(),name:"Kabab (500g)",price:250,type:"nonveg",img:"",desc:""},
+  ]},
+  { category:"Chinese Veg Starters", emoji:"🥦", items:[
+    {id:uid(),name:"Gobi Manchurian",price:80,type:"veg",img:"",desc:""},
+    {id:uid(),name:"Mushroom Manchurian",price:110,type:"veg",img:"",desc:""},
+    {id:uid(),name:"Paneer Manchurian",price:110,type:"veg",img:"",desc:""},
+    {id:uid(),name:"Baby Corn Manchurian",price:110,type:"veg",img:"",desc:""},
+    {id:uid(),name:"Gobi Chilly",price:100,type:"veg",img:"",desc:""},
+    {id:uid(),name:"Gobi 65",price:100,type:"veg",img:"",desc:""},
+    {id:uid(),name:"Mushroom Chilly",price:120,type:"veg",img:"",desc:""},
+    {id:uid(),name:"Mushroom 65",price:120,type:"veg",img:"",desc:""},
+    {id:uid(),name:"Mushroom Pepper Dry",price:120,type:"veg",img:"",desc:""},
+    {id:uid(),name:"Paneer Chilly",price:140,type:"veg",img:"",desc:""},
+    {id:uid(),name:"Paneer Pepper Dry",price:140,type:"veg",img:"",desc:""},
+    {id:uid(),name:"Paneer 65",price:140,type:"veg",img:"",desc:""},
+    {id:uid(),name:"Baby Corn Chilly",price:120,type:"veg",img:"",desc:""},
+    {id:uid(),name:"Baby Corn 65",price:120,type:"veg",img:"",desc:""},
+  ]},
+  { category:"Soups", emoji:"🍲", items:[
+    {id:uid(),name:"Veg Hot & Sour Soup",price:60,type:"veg",img:"",desc:""},
+    {id:uid(),name:"Veg Manchow Soup",price:70,type:"veg",img:"",desc:""},
+    {id:uid(),name:"Chicken Hot & Sour Soup",price:80,type:"nonveg",img:"",desc:""},
+    {id:uid(),name:"Chicken Manchow Soup",price:80,type:"nonveg",img:"",desc:""},
+  ]},
+  { category:"Fried Rice", emoji:"🍚", items:[
+    {id:uid(),name:"Veg Fried Rice",price:60,type:"veg",img:"",desc:""},
+    {id:uid(),name:"Gobi Fried Rice",price:90,type:"veg",img:"",desc:""},
+    {id:uid(),name:"Mushroom Fried Rice",price:110,type:"veg",img:"",desc:""},
+    {id:uid(),name:"Panner Fried Rice",price:110,type:"veg",img:"",desc:""},
+    {id:uid(),name:"Baby Corn Fried Rice",price:110,type:"veg",img:"",desc:""},
+    {id:uid(),name:"Kaju Fried Rice",price:150,type:"veg",img:"",desc:""},
+    {id:uid(),name:"Ghee Rice",price:70,type:"veg",img:"",desc:""},
+    {id:uid(),name:"Jeera Rice",price:70,type:"veg",img:"",desc:""},
+    {id:uid(),name:"Veg Schezwan Fried Rice",price:70,type:"veg",img:"",desc:""},
+    {id:uid(),name:"Gobi Schezwan Fried Rice",price:100,type:"veg",img:"",desc:""},
+    {id:uid(),name:"Mushroom Schezwan Fried Rice",price:120,type:"veg",img:"",desc:""},
+    {id:uid(),name:"Panner Schezwan Fried Rice",price:120,type:"veg",img:"",desc:""},
+    {id:uid(),name:"Baby Corn Schezwan Fried Rice",price:120,type:"veg",img:"",desc:""},
+    {id:uid(),name:"Egg Fried Rice (1 Egg)",price:70,type:"nonveg",img:"",desc:""},
+    {id:uid(),name:"Egg Fried Rice (2 Eggs)",price:80,type:"nonveg",img:"",desc:""},
+    {id:uid(),name:"Egg Schezwan Fried Rice",price:90,type:"nonveg",img:"",desc:""},
+    {id:uid(),name:"Chicken Fried Rice",price:110,type:"nonveg",img:"",desc:""},
+    {id:uid(),name:"Chicken Schezwan Fried Rice",price:120,type:"nonveg",img:"",desc:""},
+    {id:uid(),name:"Chicken Manchow Fried Rice",price:135,type:"nonveg",img:"",desc:""},
+    {id:uid(),name:"Triple Chicken Schezwan Fried Rice",price:135,type:"nonveg",img:"",desc:""},
+  ]},
+  { category:"Noodles", emoji:"🍜", items:[
+    {id:uid(),name:"Veg Noodles",price:60,type:"veg",img:"",desc:""},
+    {id:uid(),name:"Gobi Noodles",price:90,type:"veg",img:"",desc:""},
+    {id:uid(),name:"Mushroom Noodles",price:115,type:"veg",img:"",desc:""},
+    {id:uid(),name:"Panner Noodles",price:110,type:"veg",img:"",desc:""},
+    {id:uid(),name:"Baby Corn Noodles",price:110,type:"veg",img:"",desc:""},
+    {id:uid(),name:"Veg Hakka Noodles",price:70,type:"veg",img:"",desc:""},
+    {id:uid(),name:"Veg Schezwan Noodles",price:70,type:"veg",img:"",desc:""},
+    {id:uid(),name:"Gobi Schezwan Noodles",price:100,type:"veg",img:"",desc:""},
+    {id:uid(),name:"Mushroom Schezwan Noodles",price:120,type:"veg",img:"",desc:""},
+    {id:uid(),name:"Panner Schezwan Noodles",price:120,type:"veg",img:"",desc:""},
+    {id:uid(),name:"Baby Corn Schezwan Noodles",price:120,type:"veg",img:"",desc:""},
+    {id:uid(),name:"Egg Hakka Noodles",price:95,type:"nonveg",img:"",desc:""},
+    {id:uid(),name:"Egg Noodles (1 Egg)",price:70,type:"nonveg",img:"",desc:""},
+    {id:uid(),name:"Egg Noodles (2 Eggs)",price:80,type:"nonveg",img:"",desc:""},
+    {id:uid(),name:"Egg Schezwan Noodles",price:90,type:"nonveg",img:"",desc:""},
+    {id:uid(),name:"Chicken Hakka Noodles",price:120,type:"nonveg",img:"",desc:""},
+    {id:uid(),name:"Chicken Noodles",price:110,type:"nonveg",img:"",desc:""},
+    {id:uid(),name:"Chicken Schezwan Noodles",price:120,type:"nonveg",img:"",desc:""},
+    {id:uid(),name:"Egg Chilly & Garlic Noodles",price:110,type:"nonveg",img:"",desc:""},
+    {id:uid(),name:"Chicken Chilly & Garlic Noodles",price:130,type:"nonveg",img:"",desc:""},
+  ]},
+  { category:"Non Veg Curries", emoji:"🍛", items:[
+    {id:uid(),name:"Regular Chicken Dry",price:100,type:"nonveg",img:"",desc:""},
+    {id:uid(),name:"Regular Chicken Curry",price:130,type:"nonveg",img:"",desc:""},
+    {id:uid(),name:"Pepper Chicken Dry",price:110,type:"nonveg",img:"",desc:""},
+    {id:uid(),name:"Pepper Chicken Curry",price:140,type:"nonveg",img:"",desc:""},
+    {id:uid(),name:"Chilli Chicken (Boneless)",price:170,type:"nonveg",img:"",desc:""},
+    {id:uid(),name:"Guntur Chicken (Boneless)",price:170,type:"nonveg",img:"",desc:""},
+    {id:uid(),name:"Gongura Chicken (Boneless)",price:170,type:"nonveg",img:"",desc:""},
+    {id:uid(),name:"Chettinad Chicken (Boneless)",price:170,type:"nonveg",img:"",desc:""},
+    {id:uid(),name:"Methi Chicken (Boneless)",price:170,type:"nonveg",img:"",desc:""},
+    {id:uid(),name:"Butter Chicken (Boneless)",price:180,type:"nonveg",img:"",desc:""},
+    {id:uid(),name:"Kadai Chicken (Boneless)",price:180,type:"nonveg",img:"",desc:""},
+    {id:uid(),name:"Kaju Chicken (Boneless)",price:250,type:"nonveg",img:"",desc:""},
+  ]},
+  { category:"Veg Curries", emoji:"🥘", items:[
+    {id:uid(),name:"Paneer Masala",price:120,type:"veg",img:"",desc:""},
+    {id:uid(),name:"Paneer Butter Masala",price:140,type:"veg",img:"",desc:""},
+    {id:uid(),name:"Mushroom Masala",price:120,type:"veg",img:"",desc:""},
+    {id:uid(),name:"Mushroom Butter Masala",price:140,type:"veg",img:"",desc:""},
+    {id:uid(),name:"Kadai Mushroom Masala",price:150,type:"veg",img:"",desc:""},
+    {id:uid(),name:"Kadai Paneer Masala",price:150,type:"veg",img:"",desc:""},
+    {id:uid(),name:"Kaju Curry",price:160,type:"veg",img:"",desc:""},
+  ]},
+  { category:"Non Veg Meals", emoji:"🍽️", items:[
+    {id:uid(),name:"Chicken Meals",price:160,type:"nonveg",img:"",desc:"Chicken curry, Chapati (2p), Omelette, Rice, Dhal, Raita"},
+    {id:uid(),name:"Chicken Combo Meals",price:185,type:"nonveg",img:"",desc:"Chicken curry, Kabab (2p), Parota (2p), Kushka, Sweet Raita"},
+    {id:uid(),name:"Parota Chicken Curry Combo",price:80,type:"nonveg",img:"",desc:"Parota (2p), Half Chicken curry"},
+    {id:uid(),name:"Chapati Chicken Curry Combo",price:95,type:"nonveg",img:"",desc:"Chapati (2p), Half Chicken curry"},
+  ]},
+  { category:"Lunch Items", emoji:"🌞", items:[
+    {id:uid(),name:"Mini Meals",price:50,type:"veg",img:"",desc:""},
+    {id:uid(),name:"Rice Sambar",price:40,type:"veg",img:"",desc:""},
+    {id:uid(),name:"Chapati Curry",price:50,type:"veg",img:"",desc:""},
+    {id:uid(),name:"Parota Curry",price:40,type:"veg",img:"",desc:""},
+    {id:uid(),name:"Kushka (Basmati Rice)",price:70,type:"veg",img:"",desc:""},
+  ]},
+];
+
+function uid() { return '_'+Math.random().toString(36).slice(2,9); }
+
+function loadData() {
+  try {
+    const d = localStorage.getItem('ags_menu');
+    return d ? JSON.parse(d) : JSON.parse(JSON.stringify(DEFAULT_MENU));
+  } catch(e) { return JSON.parse(JSON.stringify(DEFAULT_MENU)); }
+}
+function saveData() { localStorage.setItem('ags_menu', JSON.stringify(menuData)); }
+
+let menuData = loadData();
+
+// ══════════════════════════════════════
+//  CUSTOMER SIDE
+// ══════════════════════════════════════
+let activeFilter = 'all';
+let activeCat = 'All';
+
+function renderTabs() {
+  const cats = ['All', ...menuData.map(s=>s.category)];
+  document.getElementById('catTabs').innerHTML = cats.map(c=>`
+    <button class="cat-tab ${c===activeCat?'active':''}" onclick="setCat('${c.replace(/'/g,"\\'")}')">${c==='All'?'🍽️ All':c}</button>
+  `).join('');
+}
+
+function setCat(c) {
+  activeCat = c;
+  renderTabs();
+  applyFilters();
+  if (c!=='All') {
+    setTimeout(()=>{
+      const idx = menuData.findIndex(s=>s.category===c);
+      const el = document.getElementById('csec-'+idx);
+      if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
+    },80);
+  }
+}
+
+function setFilter(f) {
+  activeFilter = f;
+  document.getElementById('fAll').className = 'filter-btn all'+(f==='all'?'':' off');
+  document.getElementById('fVeg').className = 'filter-btn veg'+(f==='veg'?'':' off');
+  document.getElementById('fNv').className  = 'filter-btn nonveg'+(f==='nonveg'?'':' off');
+  applyFilters();
+}
+
+function applyFilters() {
+  const q = document.getElementById('searchInput').value.toLowerCase().trim();
+  const sections = menuData.map((sec,si)=>{
+    if (activeCat!=='All' && sec.category!==activeCat) return null;
+    const items = sec.items.filter(item=>{
+      const mt = activeFilter==='all' || item.type===activeFilter;
+      const mq = !q || item.name.toLowerCase().includes(q) || (item.desc&&item.desc.toLowerCase().includes(q));
+      return mt&&mq;
+    });
+    if (!items.length) return null;
+    return {sec,si,items};
+  }).filter(Boolean);
+
+  const main = document.getElementById('mainContent');
+  if (!sections.length) { main.innerHTML='<div class="no-results">😕 No dishes found!</div>'; return; }
+
+  main.innerHTML = sections.map(({sec,si,items},idx)=>`
+    <div class="section" id="csec-${si}">
+      <div class="section-header">
+        <span>${sec.emoji}</span>
+        <div class="section-title">${sec.category}</div>
+        <div class="section-line"></div>
+      </div>
+      <div class="items-grid">
+        ${items.map((item,ii)=>`
+          <div class="item-card" style="animation-delay:${ii*0.04}s">
+            ${item.img
+              ? `<img class="item-img" src="${item.img}" alt="${item.name}" loading="lazy"/>`
+              : `<div class="item-img-placeholder">${sec.emoji}<div class="img-placeholder-text">No photo</div></div>`
+            }
+            <div class="item-body">
+              <div class="item-top">
+                <div class="veg-dot ${item.type}"></div>
+                <div class="item-name">${item.name}</div>
+              </div>
+              ${item.desc?`<div class="item-desc">${item.desc}</div>`:''}
+            </div>
+            <div class="item-price-wrap">
+              <div class="item-price"><span>₹</span>${item.price}</div>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>`).join('');
+}
+
+// ══════════════════════════════════════
+//  ADMIN SIDE
+// ══════════════════════════════════════
+const ADMIN_USER = 'admin';
+const ADMIN_PASS = 'ags2024';
+
+function showAdminLogin() {
+  document.getElementById('customerView').classList.remove('active');
+  document.getElementById('adminView').classList.add('active');
+}
+function showCustomer() {
+  document.getElementById('adminView').classList.remove('active');
+  document.getElementById('customerView').classList.add('active');
+  renderTabs(); applyFilters();
+}
+function doLogin() {
+  const u = document.getElementById('loginUser').value.trim();
+  const p = document.getElementById('loginPass').value;
+  if (u===ADMIN_USER && p===ADMIN_PASS) {
+    document.getElementById('adminLogin').style.display='none';
+    document.getElementById('adminDash').style.display='block';
+    renderAdminAll();
+  } else {
+    document.getElementById('loginErr').style.display='block';
+  }
+}
+function doLogout() {
+  document.getElementById('adminLogin').style.display='flex';
+  document.getElementById('adminDash').style.display='none';
+  document.getElementById('loginUser').value='';
+  document.getElementById('loginPass').value='';
+  document.getElementById('loginErr').style.display='none';
+}
+
+function switchTab(t) {
+  document.querySelectorAll('.admin-tab').forEach(el=>el.classList.remove('active'));
+  document.getElementById('tab-'+t).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  event.target.classList.add('active');
+}
+
+function renderAdminAll() {
+  renderStats();
+  renderAdminCatFilter();
+  renderAdminItems();
+  renderSectionMgr();
+  renderAddCatSelect();
+}
+
+function renderStats() {
+  const total = menuData.reduce((a,s)=>a+s.items.length,0);
+  const veg = menuData.reduce((a,s)=>a+s.items.filter(i=>i.type==='veg').length,0);
+  const nv = total-veg;
+  document.getElementById('statsRow').innerHTML = `
+    <div class="stat-card"><div class="stat-num">${menuData.length}</div><div class="stat-label">CATEGORIES</div></div>
+    <div class="stat-card"><div class="stat-num">${total}</div><div class="stat-label">TOTAL ITEMS</div></div>
+    <div class="stat-card"><div class="stat-num">${veg}V / ${nv}N</div><div class="stat-label">VEG / NON-VEG</div></div>
+  `;
+}
+
+function renderAdminCatFilter() {
+  const sel = document.getElementById('adminCatFilter');
+  sel.innerHTML = '<option value="All">All Categories</option>' +
+    menuData.map(s=>`<option value="${s.category}">${s.emoji} ${s.category}</option>`).join('');
+}
+
+function renderAdminItems() {
+  const cat = document.getElementById('adminCatFilter').value;
+  let html = '';
+  menuData.forEach((sec,si)=>{
+    if (cat!=='All' && sec.category!==cat) return;
+    sec.items.forEach((item,ii)=>{
+      html += `<div class="admin-item-card">
+        ${item.img
+          ? `<img class="admin-item-img" src="${item.img}" alt="${item.name}"/>`
+          : `<div class="admin-item-img-ph">${sec.emoji}</div>`}
+        <div class="admin-item-info">
+          <div class="admin-item-name">${item.name}</div>
+          <div class="admin-item-meta">${item.type==='veg'?'🟢':'🔴'} ${sec.category} · ₹${item.price}</div>
+        </div>
+        <div class="admin-item-actions">
+          <button class="action-btn edit" onclick="openEdit(${si},${ii})">Edit</button>
+          <button class="action-btn del" onclick="deleteItem(${si},${ii})">Del</button>
+        </div>
+      </div>`;
+    });
+  });
+  document.getElementById('adminItemsList').innerHTML = html || '<p style="color:#666;text-align:center;padding:20px">No items</p>';
+}
+
+function renderSectionMgr() {
+  document.getElementById('sectionMgr').innerHTML = menuData.map((s,i)=>`
+    <div class="section-row">
+      <span>${s.emoji} ${s.category} (${s.items.length} items)</span>
+      <div class="sec-actions">
+        <button class="action-btn del" onclick="deleteSection(${i})">Delete</button>
+      </div>
+    </div>`).join('');
+}
+
+function renderAddCatSelect() {
+  const sel = document.getElementById('addItemCat');
+  sel.innerHTML = menuData.map((s,i)=>`<option value="${i}">${s.emoji} ${s.category}</option>`).join('');
+}
+
+// ── ADD SECTION ──
+function addSection() {
+  const name = document.getElementById('newSecName').value.trim();
+  const emoji = document.getElementById('newSecEmoji').value.trim() || '🍴';
+  if (!name) { toast('Enter category name'); return; }
+  menuData.push({category:name, emoji, items:[]});
+  saveData(); renderAdminAll(); toast('✅ Category added!');
+  document.getElementById('newSecName').value='';
+  document.getElementById('newSecEmoji').value='';
+}
+function deleteSection(i) {
+  if (!confirm(`Delete "${menuData[i].category}" and all its items?`)) return;
+  menuData.splice(i,1); saveData(); renderAdminAll(); toast('🗑️ Category deleted');
+}
+
+// ── ADD ITEM ──
+let pendingImg = '';
+function previewImg(input) {
+  const file = input.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e=>{
+    pendingImg = e.target.result;
+    document.getElementById('imgPreview').src = pendingImg;
+    document.getElementById('imgPreview').style.display='block';
+    document.getElementById('imgUploadLabel').style.display='none';
+  };
+  reader.readAsDataURL(file);
+}
+function addItem() {
+  const catIdx = parseInt(document.getElementById('addItemCat').value);
+  const name = document.getElementById('addItemName').value.trim();
+  const price = parseInt(document.getElementById('addItemPrice').value);
+  const desc = document.getElementById('addItemDesc').value.trim();
+  const type = document.getElementById('addItemType').value;
+  if (!name) { toast('Enter item name'); return; }
+  if (!price||price<1) { toast('Enter valid price'); return; }
+  menuData[catIdx].items.push({id:uid(), name, price, desc, type, img:pendingImg});
+  saveData(); renderAdminAll();
+  toast('✅ Item added!');
+  document.getElementById('addItemName').value='';
+  document.getElementById('addItemPrice').value='';
+  document.getElementById('addItemDesc').value='';
+  document.getElementById('addItemType').value='veg';
+  document.getElementById('imgPreview').style.display='none';
+  document.getElementById('imgUploadLabel').style.display='flex';
+  document.getElementById('imgFileInput').value='';
+  pendingImg='';
+}
+
+// ── EDIT ITEM ──
+let editPendingImg = null;
+function openEdit(si,ii) {
+  const item = menuData[si].items[ii];
+  document.getElementById('editId').value=ii;
+  document.getElementById('editCatIdx').value=si;
+  document.getElementById('editName').value=item.name;
+  document.getElementById('editPrice').value=item.price;
+  document.getElementById('editDesc').value=item.desc||'';
+  document.getElementById('editType').value=item.type;
+  editPendingImg=null;
+  const prev = document.getElementById('editImgPreview');
+  if (item.img) { prev.src=item.img; prev.style.display='block'; document.getElementById('editImgLabel').style.display='none'; }
+  else { prev.style.display='none'; document.getElementById('editImgLabel').style.display='flex'; }
+  document.getElementById('editModal').classList.add('open');
+}
+function previewEditImg(input) {
+  const file=input.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    editPendingImg=e.target.result;
+    document.getElementById('editImgPreview').src=editPendingImg;
+    document.getElementById('editImgPreview').style.display='block';
+    document.getElementById('editImgLabel').style.display='none';
+  };
+  reader.readAsDataURL(file);
+}
+function saveEdit() {
+  const si=parseInt(document.getElementById('editCatIdx').value);
+  const ii=parseInt(document.getElementById('editId').value);
+  const item=menuData[si].items[ii];
+  item.name=document.getElementById('editName').value.trim();
+  item.price=parseInt(document.getElementById('editPrice').value)||item.price;
+  item.desc=document.getElementById('editDesc').value.trim();
+  item.type=document.getElementById('editType').value;
+  if (editPendingImg!==null) item.img=editPendingImg;
+  saveData(); renderAdminAll(); closeModal(); toast('✅ Changes saved!');
+}
+function closeModal() { document.getElementById('editModal').classList.remove('open'); editPendingImg=null; }
+
+// ── DELETE ITEM ──
+function deleteItem(si,ii) {
+  if (!confirm('Delete this item?')) return;
+  menuData[si].items.splice(ii,1);
+  saveData(); renderAdminAll(); toast('🗑️ Item deleted');
+}
+
+// ── TOAST ──
+function toast(msg) {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+// ── INIT ──
+renderTabs();
+applyFilters();
+</script>
+</body>
+</html>
